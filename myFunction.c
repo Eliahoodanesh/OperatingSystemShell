@@ -108,16 +108,57 @@ void cd(char **arg)
     else if (chdir(arg[1]) != 0)
         printf("-myShell: cd: %s: No such file or directory\n", arg[1]);
 }
+
+void get_next_cp_arg(char ** arguments, char name[], int*counter){
+    char * curr_arg;
+    int prev_counter = *counter;
+     // if first argument starts with "
+    if(arguments[*counter][0] == '\"'){
+        while(1){
+            curr_arg = arguments[*counter]; //get current argument
+            if(curr_arg[strlen(curr_arg)-1] == '\"'){
+                //last argument of first path
+                break;
+            }
+            (*counter)++;
+        }
+    }
+
+    for(int i=prev_counter;i<=*counter;i++){
+        curr_arg = arguments[i];
+        if(i==prev_counter && curr_arg[0] == '\"'){
+            strcat(name, &curr_arg[1]);
+        }else{
+            strcat(name, curr_arg);
+        }
+        if(i != *counter){
+            strcat(name, "/");
+        }
+    }
+
+    if(name[strlen(name)-1] == '\"'){
+        name[strlen(name)-1] = 0;
+    }
+}
+
+
 void cp(char **arguments)
 {
     char ch;
     FILE *src, *des;
-    if ((src = fopen(arguments[1], "r")) == NULL)
+    char src_name[100]={0}, dst_name[100]={0};
+    int arg_counter=1;
+
+    get_next_cp_arg(arguments, src_name, &arg_counter);
+    arg_counter++; //move arg_counter to the second path start    
+    get_next_cp_arg(arguments, dst_name, &arg_counter);
+
+    if ((src = fopen(src_name, "r")) == NULL)
     {
         puts("Erorr");
         return;
     }
-    if ((des = fopen(arguments[2], "w")) == NULL)
+    if ((des = fopen(dst_name, "w")) == NULL)
     {
         puts("Erorr");
         fclose(src);
