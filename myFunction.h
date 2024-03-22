@@ -48,3 +48,9 @@ void get_dir();
 void delete(char **);
 void systemCall(char **);
 void mypipe(char **,char **);
+
+void move(char **args);
+void echo_append(char **args);
+void echorite(char **args);
+void reads(char **args);
+void wordCount(char **args);

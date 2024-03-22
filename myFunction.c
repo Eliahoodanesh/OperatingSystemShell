@@ -2,6 +2,10 @@
 #include <aio.h>
 #include <sys/utsname.h>
 #include <pwd.h>
+#include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 char *getInputFromUser()
 {
@@ -230,5 +234,122 @@ void mypipe(char **argv1, char **argv2)
         close(fildes[1]);
         /* standard input now comes from pipe */
         execvp(argv2[0], argv2);
+    }
+}
+
+
+void move(char **args) {
+    const char *filename = args[1];
+    const char *directory = args[2];
+
+    if (access(filename, F_OK) == -1) {
+        fprintf(stderr, "Error: Source file '%s' does not exist.\n", filename);
+        return;
+    }
+
+    if (access(directory, F_OK) == -1) {
+        fprintf(stderr, "Error: Destination directory '%s' does not exist.\n", directory);
+        return;
+    }
+
+    char full_destination_path[256];
+    snprintf(full_destination_path, sizeof(full_destination_path), "%s/%s", directory, filename);
+
+    int result = rename(filename, full_destination_path);
+
+    if (result == 0) {
+        printf("File '%s' moved successfully to directory '%s'.\n", filename, directory);
+    } else {
+        perror("Error moving file");
+    }
+}
+
+void echo_append(char **args) {
+    const char *text = args[1];
+    const char *filepath = args[2];
+
+    FILE *file = fopen(filepath, "ab");
+
+    if (file == NULL) {
+        fprintf(stderr, "Error opening file: Could not open %s\n", filepath);
+        return;
+    }
+
+    fprintf(file, "%s\n", text);
+
+    fclose(file);
+}
+
+void echorite(char **args) {
+    const char* text = args[1];
+    const char* filepath = args[2];  
+
+    FILE *file = fopen(filepath, "w"); // "w" mode for write (overwrite)
+
+    if (file == NULL) {
+        fprintf(stderr, "Error opening file: Could not open %s\n", filepath);
+        return;
+    }
+
+    fprintf(file, "%s\n", text);
+
+    fclose(file);
+}
+
+
+void reads(char **args) {
+    const char *file_path = args[1];
+    FILE *file = fopen(file_path, "r");
+
+    if (file == NULL) {
+        return;
+    }
+
+    char ch;
+    while ((ch = fgetc(file)) != EOF) {
+        putchar(ch);
+    }
+
+    fclose(file);
+}
+
+void wordCount(char **args) {
+    const char *option = args[1];
+    const char *file_path = args[2];
+
+    // Open the file for reading
+    FILE *file = fopen(file_path, "r");
+
+    if (file == NULL) {
+        fprintf(stderr, "Error: Could not open file '%s'\n", file_path);
+        return;
+    }
+
+    int lines = 0;
+    int words = 0;
+
+    char buffer[1024];
+    while (fgets(buffer, sizeof(buffer), file) != NULL) {
+        lines++;
+
+        // Count words in each line
+        char *token = strtok(buffer, " \t\n");
+        while (token != NULL) {
+            words++;
+            token = strtok(NULL, " \t\n");
+        }
+    }
+
+    // Close the file
+    fclose(file);
+
+    // Print result based on option
+    if (strcmp(option, "-l") == 0) {
+        printf("Number of lines in '%s': %d\n", file_path, lines);
+    } else if (strcmp(option, "-w") == 0) {
+        printf("Number of words in '%s': %d\n", file_path, words);
+    } else {
+        fprintf(stderr, "Error: Invalid option '%s'\n", option);
+        return;
     }
 }

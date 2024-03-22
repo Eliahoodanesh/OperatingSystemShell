@@ -23,6 +23,18 @@ int main()
             delete (arguments);
         else if (strcmp(input, "dir") == 0)
             get_dir();
+        else if (strcmp(input, "move") == 0)
+            move(arguments);
+        else if (strcmp(input, "echoppend") == 0)
+            echo_append(arguments);
+        else if (strcmp(input, "echorite") == 0)
+            echorite(arguments);
+         else if (strcmp(input, "read") == 0)
+            reads(arguments); 
+        else if (strcmp(input, "wordCount") == 0)
+            wordCount(arguments); 
+             
+
         else if (piping)
         {
             char *argv1[] = {arguments[0], NULL};
