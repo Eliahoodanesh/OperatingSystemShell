@@ -27,7 +27,7 @@ int main()
         if (piping_index != 0)
         { 
 
-            char *argv1[piping_index+1]; //"ls -l | something bla bla bla NULL"
+            char *argv1[piping_index+1]; //"ls -l | something"
             for(int i=0;i<piping_index; i++){
                 argv1[i] = arguments[i];
             }

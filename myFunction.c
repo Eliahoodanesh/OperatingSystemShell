@@ -24,6 +24,7 @@ char *getInputFromUser()
 
     return str;
 }
+// הפונקציה מפצלת מחרוזת נתונה לתת מחרוזות, ומחזירה מערך של התת מחרוזות כתוצאה
 char **splitArgument(char *str)
 {
     char *subStr;
@@ -43,6 +44,7 @@ char **splitArgument(char *str)
 
     return argumnts;
 }
+//`getLocation` מדפיסה את המיקום הנוכחי, שם המשתמש ושם המחשב ואחרי כך מדפיסה "$ " לתוך ה־prompt.
 void getLocation()
 {
     char location[BUFF_SIZE];
@@ -73,6 +75,7 @@ void logout(char *input)
     puts("log out");
     exit(EXIT_SUCCESS);
 }
+//`echo` מדפיסה את הארגומנטים שנשלחו אליה, ו`compose_path` בונה נתיב לקובץ ממחרוזות הארגומנטים שהתקבלו.
 void echo(char **arg)
 {
     while (*(++arg))
@@ -112,6 +115,7 @@ char* compose_path(char** args,char*out_path){
 
 
 }
+//משנה את התיקייה הנוכחית לפי הארגומנט שהתקבל ומדפיסה הודעת שגיאה אם התיקייה לא קיימת.
 void cd(char **arg)
 {
     char out_path[1024]={0};
@@ -123,7 +127,7 @@ void cd(char **arg)
     if (chdir(path) != 0)
         printf("-myShell: cd: %s: No such file or directory\n", arg[1]);
 }
-
+//מקבלת מערך של מחרוזות ושם לקובץ, ומחברת את המחרוזות לשם של הקובץ.
 void get_next_cp_arg(char ** arguments, char name[], int*counter){
     char * curr_arg;
     int prev_counter = *counter;
