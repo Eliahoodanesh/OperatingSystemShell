@@ -7,13 +7,36 @@ int main()
     welcome();
     while (1)
     {
-        int piping = 0;
+        int piping_index = 0;
+        int arg_index=0;
         getLocation();
         char *input = getInputFromUser();
         char **arguments = splitArgument(input);
+
+
         if (strncmp(arguments[0], "exit", 5) == 0)
             logout(input);
-        if (strcmp(input, "echo") == 0)
+        while(arguments[arg_index] != NULL){
+            if(strncmp(arguments[arg_index], "|", 1) == 0){
+                piping_index = arg_index;
+                break; 
+            }
+            arg_index++;
+        }
+
+        if (piping_index != 0)
+        { 
+
+            char *argv1[piping_index+1]; //"ls -l | something bla bla bla NULL"
+            for(int i=0;i<piping_index; i++){
+                argv1[i] = arguments[i];
+            }
+            argv1[piping_index]=NULL;
+            char **argv2 = &(arguments[piping_index+1]);
+            mypipe(argv1, argv2);
+            wait(NULL);
+        }
+        else if (strcmp(input, "echo") == 0)
             echo(arguments);
         else if (strcmp(input, "cd") == 0)
             cd(arguments);
@@ -33,15 +56,6 @@ int main()
             reads(arguments); 
         else if (strcmp(input, "wordCount") == 0)
             wordCount(arguments); 
-             
-
-        else if (piping)
-        {
-            char *argv1[] = {arguments[0], NULL};
-            char *argv2[] = {arguments[2], arguments[3], NULL};
-            mypipe(argv1, argv2);
-            wait(NULL);
-        }
         else
         {
             systemCall(arguments);
@@ -68,30 +82,3 @@ void welcome()
 
 
 }
-
-
-
-
-// void getLocation() {
-//     char location[BUFF_SIZE];
-
-//     if (getcwd(location, BUFF_SIZE) == NULL) {
-//         puts("Error");
-//     } else {
-//         struct passwd *pw;
-//         uid_t uid;
-//         uid = geteuid();
-//         pw = getpwuid(uid);
-
-//        struct utsname unameData;
-//         uname(&unameData);
-
-// // Print username@hostname in green
-//     puts("\033[1;32m%s@%s:\033[0m", pw->pw_name, unameData.nodename);
-
-//     // Print directory path in blue
-//     puts("\033[1;34m%s\033[0m", location);
-
-//     // Print "$" in white
-//     puts("\033[1;37m$\033[0m ");
-//     } 

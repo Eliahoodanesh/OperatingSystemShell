@@ -79,37 +79,48 @@ void echo(char **arg)
         printf("%s ", *arg);
     puts("");
 }
-void cd(char **arg)
-{
-    int arg_counter = 1;
-    if (strncmp(arg[1], "\"", 1) != 0 && arg[2] != NULL) //cd "x
-        puts("-myShell: cd: too many arguments");
-    else if (strncmp(arg[1], "\"", 1) == 0)
-    {
-        while(arg[++arg_counter] != NULL);
-        if (arg[arg_counter-1][strlen(arg[arg_counter-1])-1] != '\"'){
-            puts("invalid command, missing last quote");
-            return;
-        }
+char* compose_path(char** args,char*out_path){
+    int arg_counter = 0;
 
-        for(int path_idx=1; path_idx<arg_counter;path_idx++){
+    // too many arguments
+    if (strncmp(args[0], "\"", 1) != 0 && args[1] != NULL){
+        return NULL;
+    }
+    if (strncmp(args[0], "\"", 1) == 0){
+        while(args[++arg_counter] != NULL);//count the number of argument
+        if (args[arg_counter-1][strlen(args[arg_counter-1])-1] != '\"'){
+            return NULL;
+        }
+         for(int path_idx=0; path_idx<arg_counter;path_idx++){
             char * curr_path;
-            if(path_idx==1){
-                curr_path = &arg[path_idx][1];
+            if(path_idx==0){
+                curr_path = &args[path_idx][1];
             } else if (path_idx == arg_counter-1){
-                curr_path = arg[path_idx];
+                curr_path = args[path_idx];
                 curr_path[strlen(curr_path)-1]=0;
             }else{
-                curr_path = arg[path_idx];
+                curr_path = args[path_idx];
             }
-            if (chdir(curr_path) != 0){
-                printf("-myShell: cd: %s: No such file or directory\n", curr_path);
+            strcat(out_path,curr_path);
+            if(path_idx!=arg_counter-1){
+                strcat (out_path,"/");
             }
-           
         }
-       
+        return out_path;
     }
-    else if (chdir(arg[1]) != 0)
+    return args[0];
+
+
+}
+void cd(char **arg)
+{
+    char out_path[1024]={0};
+    char* path= compose_path(&arg[1],out_path);
+   if(path==NULL){
+    printf("invalid cd command\n");
+    return;
+   }
+    if (chdir(path) != 0)
         printf("-myShell: cd: %s: No such file or directory\n", arg[1]);
 }
 
@@ -196,7 +207,13 @@ void get_dir()
 }
 void delete(char **arg)
 {
-    if (unlink(arg[1]) != 0)
+      char out_path[1024]={0};
+    char* path= compose_path(&arg[1],out_path);
+     if(path==NULL){
+    printf("invalid delete command\n");
+    return;
+   }
+    if (unlink(path) != 0)
         printf("-myShell: unlink: %s: No such file or directory\n", arg[1]);
 }
 void systemCall(char **arg)
