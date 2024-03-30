@@ -24,7 +24,7 @@ char *getInputFromUser()
 
     return str;
 }
-// הפונקציה מפצלת מחרוזת נתונה לתת מחרוזות, ומחזירה מערך של התת מחרוזות כתוצאה
+// The function splits a given string into substrings and returns an array of these substrings as a result.
 char **splitArgument(char *str)
 {
     char *subStr;
@@ -44,7 +44,7 @@ char **splitArgument(char *str)
 
     return argumnts;
 }
-//`getLocation` מדפיסה את המיקום הנוכחי, שם המשתמש ושם המחשב ואחרי כך מדפיסה "$ " לתוך ה־prompt.
+//// `getLocation` prints the current location, username, and hostname, and then prints "$ " into the prompt.
 void getLocation()
 {
     char location[BUFF_SIZE];
@@ -75,7 +75,7 @@ void logout(char *input)
     puts("log out");
     exit(EXIT_SUCCESS);
 }
-//`echo` מדפיסה את הארגומנטים שנשלחו אליה, ו`compose_path` בונה נתיב לקובץ ממחרוזות הארגומנטים שהתקבלו.
+// `echo` prints the arguments sent to it, and `compose_path` constructs a path to a file from the argument strings it receives.
 void echo(char **arg)
 {
     while (*(++arg))
@@ -115,7 +115,7 @@ char* compose_path(char** args,char*out_path){
 
 
 }
-//משנה את התיקייה הנוכחית לפי הארגומנט שהתקבל ומדפיסה הודעת שגיאה אם התיקייה לא קיימת.
+// Changes the current directory according to the received argument and prints an error message if the directory does not exist.
 void cd(char **arg)
 {
     char out_path[1024]={0};
@@ -127,7 +127,7 @@ void cd(char **arg)
     if (chdir(path) != 0)
         printf("-myShell: cd: %s: No such file or directory\n", arg[1]);
 }
-//מקבלת מערך של מחרוזות ושם לקובץ, ומחברת את המחרוזות לשם של הקובץ.
+//// Receives an array of strings and a filename, then concatenates the strings to the filename.
 void get_next_cp_arg(char ** arguments, char name[], int*counter){
     char * curr_arg;
     int prev_counter = *counter;
@@ -160,7 +160,7 @@ void get_next_cp_arg(char ** arguments, char name[], int*counter){
     }
 }
 
-
+//The cp function copies the content of the source file (src_name) to the destination file (dst_name).
 void cp(char **arguments)
 {
     char ch;
